@@ -421,16 +421,16 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;heigh
 const API_KEY = 'PASTE_YOUR_KEY_HERE';
 
 const AGENTS = [
-  {id:'aria',  name:'Aria',   role:'New Biz Hunter',    emoji:'👩‍💼', color:'#00ff88', maxStam:100, costHop:6},
-  {id:'kai',   name:'Kai',    role:'Account Expander',  emoji:'👨‍💼', color:'#00aaff', maxStam:70,  costHop:9},
-  {id:'morgan',name:'Morgan', role:'Enterprise Closer', emoji:'👔',  color:'#ff8800', maxStam:80,  costHop:8},
-  {id:'drew',  name:'Drew',   role:'Strategic Accounts',emoji:'♟️',  color:'#88ff00', maxStam:65,  costHop:10},
-  {id:'blake', name:'Blake',  role:'Competitive Intel', emoji:'⚔️',  color:'#ff8844', maxStam:90,  costHop:7},
-  {id:'sam',   name:'Sam',    role:'SMB Volume Lead',   emoji:'🎯',  color:'#ff44aa', maxStam:95,  costHop:6},
-  {id:'alex',  name:'Alex',   role:'Channel & Partners',emoji:'🤝',  color:'#aa44ff', maxStam:85,  costHop:7},
-  {id:'jordan',name:'Jordan', role:'APAC / EMEA Lead',  emoji:'🌏',  color:'#ffd700', maxStam:75,  costHop:9},
-  {id:'casey', name:'Casey',  role:'Retention Spec.',   emoji:'🔄',  color:'#00ffdd', maxStam:80,  costHop:8},
-  {id:'riley', name:'Riley',  role:'PLG Motion Lead',   emoji:'🚀',  color:'#ff6644', maxStam:95,  costHop:6},
+  {id:'aria',  name:'Aria',   role:'New Biz Hunter',    emoji:'👩‍💼', color:'#00ff88', maxStam:100, costHop:3},
+  {id:'kai',   name:'Kai',    role:'Account Expander',  emoji:'👨‍💼', color:'#00aaff', maxStam:70,  costHop:4},
+  {id:'morgan',name:'Morgan', role:'Enterprise Closer', emoji:'👔',  color:'#ff8800', maxStam:80,  costHop:4},
+  {id:'drew',  name:'Drew',   role:'Strategic Accounts',emoji:'♟️',  color:'#88ff00', maxStam:65,  costHop:5},
+  {id:'blake', name:'Blake',  role:'Competitive Intel', emoji:'⚔️',  color:'#ff8844', maxStam:90,  costHop:3},
+  {id:'sam',   name:'Sam',    role:'SMB Volume Lead',   emoji:'🎯',  color:'#ff44aa', maxStam:95,  costHop:3},
+  {id:'alex',  name:'Alex',   role:'Channel & Partners',emoji:'🤝',  color:'#aa44ff', maxStam:85,  costHop:3},
+  {id:'jordan',name:'Jordan', role:'APAC / EMEA Lead',  emoji:'🌏',  color:'#ffd700', maxStam:75,  costHop:4},
+  {id:'casey', name:'Casey',  role:'Retention Spec.',   emoji:'🔄',  color:'#00ffdd', maxStam:80,  costHop:4},
+  {id:'riley', name:'Riley',  role:'PLG Motion Lead',   emoji:'🚀',  color:'#ff6644', maxStam:95,  costHop:3},
 ];
 
 const DEALS = {
@@ -1186,7 +1186,6 @@ async function execTool(who,name,inp,ag){
         var _si=_sm[inp.source]||['📡',(SOURCES.find(function(x){return x.id===inp.source;})||{label:inp.source}).label+' online','activated by '+ag.name];
         showEvent(_si[0],_si[1],ag.name+' — '+_si[2],srcColor);
       }
-      s.stamina=Math.max(0,s.stamina-ag.costHop);
       logDec(who,'move','→ '+label+(inp.reason?' ('+inp.reason.substring(0,25)+')':''),AGD[who]._lastThought);
     }
     document.getElementById('acst-'+who).textContent='→ '+label;
@@ -1577,14 +1576,78 @@ function openStory() {
   const typeIcons = {plan:'📋',move:'→',intel:'◆',deal:'💰',err:'✗'};
   const typeColors = {plan:'#aa44ff',move:'#60a5fa',intel:'#4aff9a',deal:'#ffd700',err:'#ff4444'};
   const typeLabels = {plan:'Planning',move:'Moving to Source',intel:'Gathering Intel',deal:'Closing Deal',err:'Error / Redirect'};
-  const whyMap = {
-    plan:'Agent analysed its role and identified the most relevant data sources to build a strong pitch.',
-    move:'Agent navigated to this source to gather intelligence that supports its sales strategy.',
-    intel:'Agent extracted specific data points to understand the prospect and sharpen its pitch.',
-    deal:'Agent had gathered sufficient intelligence and confidence to make a compelling closing pitch.',
-    err:'Agent hit a constraint (budget or bandwidth) and adapted its route accordingly.'
+  const agentWhy = {
+    aria: {
+      plan: 'Aria scanned the market for greenfield accounts — new logos are her speciality, so she leads with signals and lead data.',
+      move: 'Aria routes to fresh intelligence. As a new business hunter, she needs prospect data before she can pitch cold.',
+      intel: 'Aria extracts intent signals and company triggers — she pitches best when she knows exactly why a prospect needs to buy now.',
+      deal: 'Aria has enough context to make a sharp, tailored first-touch pitch. She moves fast before the window closes.',
+      err: 'Aria hit her bandwidth limit — she covered ground quickly but now needs to consolidate before the next push.'
+    },
+    kai: {
+      plan: 'Kai maps expansion potential within existing accounts — he looks for signals of growth, new hires, or budget changes.',
+      move: 'Kai visits CRM and social data first — expansion deals live in relationship history, not cold outreach.',
+      intel: 'Kai digs into product usage and account health signals to identify the right expansion angle.',
+      deal: 'Kai has identified the upsell vector and stakeholder. Time to propose the expansion before a competitor does.',
+      err: 'Kai ran out of runway — account expansion is complex and he spent his bandwidth on deep relationship analysis.'
+    },
+    morgan: {
+      plan: 'Morgan targets enterprise accounts — he needs pricing, competitive positioning, and decision-maker intelligence before approaching.',
+      move: 'Morgan goes straight to competitive intel and pricing data. Enterprise deals live or die on positioning.',
+      intel: 'Morgan extracts deal structure details and competitive weaknesses — enterprise buyers need a tailored business case.',
+      deal: 'Morgan has built the full business case. He closes with confidence backed by deep competitive and pricing intelligence.',
+      err: 'Morgan exhausted his analysis budget — enterprise deals require thorough preparation, and he went deep on every source.'
+    },
+    drew: {
+      plan: 'Drew targets strategic accounts — the biggest deals in the room. He plans methodically, knowing every move is expensive.',
+      move: 'Drew accesses premium intelligence sources. Strategic accounts justify the cost — a single deal can make the quarter.',
+      intel: 'Drew synthesises cross-source intelligence to build an executive-level narrative. Board-level deals need board-level preparation.',
+      deal: 'Drew has assembled a complete strategic picture. He pitches the long-term partnership, not just the product.',
+      err: 'Drew burned through his stamina on deep research — strategic account work is intensive but the pipeline justifies it.'
+    },
+    blake: {
+      plan: 'Blake hunts competitive displacement deals — he needs to know the incumbent\'s weaknesses before making his move.',
+      move: 'Blake goes straight to competitive intel. He wins by exposing gaps in the competition, not by matching their pitch.',
+      intel: 'Blake maps competitor pricing, weaknesses, and recent losses to build a displacement narrative.',
+      deal: 'Blake has identified the decisive competitive wedge. He closes by making the switch feel inevitable.',
+      err: 'Blake ran deep on competitive research — displacement deals require airtight positioning or the prospect won\'t switch.'
+    },
+    sam: {
+      plan: 'Sam runs volume — many small deals closed fast. He looks for signals that indicate immediate buying intent across SMB accounts.',
+      move: 'Sam prioritises leads and social signals — SMB buyers move on feel and peer recommendations more than business cases.',
+      intel: 'Sam extracts quick-win buying signals. He doesn\'t need deep research, just enough to make a relevant, timely pitch.',
+      deal: 'Sam has enough signal to make a fast, relevant offer. Speed matters in SMB — he closes before the moment passes.',
+      err: 'Sam hit his bandwidth ceiling — high-volume prospecting burns through stamina quickly even with lower per-hop costs.'
+    },
+    alex: {
+      plan: 'Alex works through partners and channels — he needs to understand partner ecosystems and co-sell opportunities.',
+      move: 'Alex focuses on CRM and social data to map existing partner relationships and find warm introductions.',
+      intel: 'Alex extracts partner fit signals and co-sell potential — channel deals rely on mutual value, not direct pitching.',
+      deal: 'Alex has identified the partner angle and co-sell narrative. A warm partner introduction changes the close rate entirely.',
+      err: 'Alex stretched his bandwidth across multiple partner mapping exercises — channel strategy requires broad coverage.'
+    },
+    jordan: {
+      plan: 'Jordan covers APAC and EMEA — he factors in timezone, cultural context, and regional pricing into his outreach strategy.',
+      move: 'Jordan prioritises market signals and social data for his regions — international deals need local context to land well.',
+      intel: 'Jordan maps regional buying patterns and local competitive dynamics. A pitch that works in London may not land in Singapore.',
+      deal: 'Jordan has enough regional intelligence to localise the pitch. He closes with cultural context and regional relevance.',
+      err: 'Jordan stretched across multiple regions — APAC and EMEA together is a wide remit, and thorough coverage costs stamina.'
+    },
+    casey: {
+      plan: 'Casey specialises in retention and renewals — she focuses on usage signals, satisfaction indicators, and churn risks.',
+      move: 'Casey goes straight to CRM history and social signals — retention intelligence lives in what happened before, not market data.',
+      intel: 'Casey extracts health scores and usage trends to identify the renewal angle and pre-empt objections.',
+      deal: 'Casey has identified the retention risk and the value story. She closes the renewal before the account starts shopping.',
+      err: 'Casey spent her bandwidth on deep account health analysis — retention requires understanding the full relationship history.'
+    },
+    riley: {
+      plan: 'Riley drives product-led growth — she looks for product usage signals and viral expansion patterns within existing users.',
+      move: 'Riley prioritises social and market signals — PLG deals are driven by peer recommendations and organic product usage.',
+      intel: 'Riley maps product adoption signals and user champions who can drive internal expansion.',
+      deal: 'Riley has identified the product champion and the expansion signal. PLG closes are about momentum, not pressure.',
+      err: 'Riley covered a wide network of usage signals — PLG analysis spans many touchpoints even for targeted deals.'
+    }
   };
-
   // All decisions across all agents, sorted by timestamp
   const allDecs = [];
   AGENTS.forEach(ag => {
@@ -1606,6 +1669,13 @@ function openStory() {
         const decs = AGD[ag.id].decisions||[];
         const rev = AGD[ag.id].revenue||0;
         const [cr,cg,cb] = hexRgb(ag.color);
+        const whyMap = agentWhy[ag.id] || {
+          plan:'Planned outreach based on role and intelligence.',
+          move:'Navigated to this source for relevant intel.',
+          intel:'Extracted data points to strengthen the pitch.',
+          deal:'Sufficient intelligence gathered — moved to close.',
+          err:'Hit a resource constraint and adapted strategy.'
+        };
         const cards = decs.length===0
           ? '<div style="font-family:var(--mono);font-size:10px;color:#2a4a3a;padding:12px;text-align:center">No decisions yet</div>'
           : decs.map(d => {
