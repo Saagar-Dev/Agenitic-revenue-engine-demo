@@ -1,6 +1,3 @@
-# Agenitic-revenue-engine-demo
-
-
 ## 🏢 Agentic Revenue Engine
 
 > *"10 AI sales agents close $1.6M in pipeline. Watch every decision, every deal, every moment of competitive intelligence — live."*
