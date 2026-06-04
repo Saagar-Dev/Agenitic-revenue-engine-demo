@@ -1245,21 +1245,20 @@ async function runAgent(ag){
   const myDeals=DEALS[who].map(d=>d.id+'('+d.name+' $'+(d.v/1000).toFixed(0)+'k)').join(', ');
   const sys=`You are ${ag.name}, ${ag.role}. IMMEDIATELY call tools — no text first.
 Deals: ${myDeals}. Budget $${budg}.
-CRITICAL: Visit AT LEAST 4-5 sources and gather intel 2-3 times at EACH source before closing deals. More intel = better pitches = more closed deals.
-Steps: 1)plan_outreach 2)access_source → gather_intel 2-3 times → access_source next → gather_intel → repeat for 4-5 sources 3)close_deal for ALL 3 deals 4)access_source("hq") when done.
-You CAN revisit sources for more intel. Roam freely. The more sources you cover, the stronger your pipeline. Be aggressive and data-driven.`;
+PRIORITY: Close ALL 3 deals. Steps: 1)plan_outreach 2)access_source then gather_intel at 2 sources 3)close_deal on first deal NOW 4)gather_intel at 1-2 more sources 5)close_deal remaining deals 6)access_source("hq") when done or out of budget.
+Be decisive — after visiting 2 sources attempt close_deal immediately. Closing deals is the mission, not gathering endless intel.`
   const msgs=[{role:'user',content:`${ag.name} — close your pipeline! Budget $${budg}. Deals: ${myDeals}`}];
   let iter=0;
-  while(iter++<28){
+  while(iter++<32){
     document.getElementById('acst-'+who).textContent='🤔 thinking...';
     await acquireSlot();
     while(missionPaused){await new Promise(r=>setTimeout(r,150));}
     s.kpi.cal++;updateCard(who);
-    const trim=msgs.length>6?msgs.slice(-6):msgs;
+    const trim=msgs.length>10?msgs.slice(-10):msgs;
     try{
       const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
         headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model:'claude-haiku-4-5',max_tokens:400,system:sys,tools:TOOLS,messages:trim})});
+        body:JSON.stringify({model:'claude-haiku-4-5',max_tokens:700,system:sys,tools:TOOLS,messages:trim})});
       if(!r.ok){const e=await r.json();addLog(ag.name+' ERR: '+(e.error?.message||'err').substring(0,50),'le');break;}
       const data=await r.json();
       const content=data.content||[];
